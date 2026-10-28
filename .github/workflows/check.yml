@@ -1,0 +1,21 @@
+name: Laravel checks
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_sqlite, dom, xml, curl
+          tools: composer:v2
+          coverage: none
+      - run: composer install --prefer-dist --no-interaction
+      - run: cp .env.example .env
+      - run: php artisan key:generate
+      - run: composer test
+      - run: php artisan route:list
+      - run: php artisan view:cache
+      - run: php artisan route:cache
+      - run: php artisan config:cache
